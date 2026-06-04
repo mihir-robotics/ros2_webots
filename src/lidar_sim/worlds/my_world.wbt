@@ -11,13 +11,18 @@ Viewpoint {
   position 1.700313773507203 1.0549607538959629 1.4846240848267684
   follow "my_robot"
 }
-TexturedBackground {
+TexturedBackground{
 }
 TexturedBackgroundLight {
 }
 RectangleArena {
   floorSize 3 3
-  wallHeight 0.1
+  wallHeight 0.2
+  floorAppearance PBRAppearance {
+    baseColor 0.5 0.5 0.5
+    roughness 1
+    metalness 0
+  }
 }
 
 # ── MAZE WALLS ───────────────────────────────────────────────────────────────
@@ -41,12 +46,11 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
-      geometry Box { size 2.6 0.1 0.2 }
+      geometry Box { size 2.6 0.1 0.1 }
     }
   ]
   name "wall_1"
-  boundingObject Shape { geometry Box { size 2.6 0.1 0.2 } }
-  physics Physics {}
+  boundingObject Shape { geometry Box { size 2.6 0.1 0.1 } }
 }
 
 # W2 — West wall of Corridor 2 (vertical)
@@ -57,12 +61,11 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
-      geometry Box { size 0.1 1.9 0.2 }
+      geometry Box { size 0.1 2.0 0.1 }
     }
   ]
   name "wall_2"
-  boundingObject Shape { geometry Box { size 0.1 1.9 0.2 } }
-  physics Physics {}
+  boundingObject Shape { geometry Box { size 0.1 2.0 0.1 } }
 }
 
 # W3 — South wall of Corridor 3 (horizontal)
@@ -73,28 +76,23 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
-      geometry Box { size 1.9 0.1 0.2 }
+      geometry Box { size 2.0 0.1 0.1 }
     }
   ]
   name "wall_3"
-  boundingObject Shape { geometry Box { size 1.9 0.1 0.2 } }
-  physics Physics {}
+  boundingObject Shape { geometry Box { size 2.0 0.1 0.1 } }
 }
 
-# W4 — West end cap of Corridor 3 (vertical)
-#   x = -0.8, runs from y = 0.8 to y = 1.5  (length 0.7)
-#   center: (-0.8, 1.15, 0.1)
 Solid {
-  translation -0.8 1.15 0.1
+  translation 0 -0.15 0
   children [
     Shape {
-      appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
-      geometry Box { size 0.1 0.7 0.2 }
+      appearance PBRAppearance { baseColor 0.2 0.4 0.4 roughness 1 metalness 0 }
+      geometry Box { size 0.3 0.3 0.3 }
     }
   ]
-  name "wall_4"
-  boundingObject Shape { geometry Box { size 0.1 0.7 0.2 } }
-  physics Physics {}
+  name "box_1"
+  boundingObject Shape { geometry Box { size 0.3 0.3 0.3 } }
 }
 
 Robot {
@@ -136,6 +134,7 @@ Robot {
         }
       }
     }
+
     HingeJoint {
       jointParameters HingeJointParameters {
         axis 0 1 0
@@ -157,8 +156,10 @@ Robot {
         }
       }
     }
+
+    # Main robot body (slightly shorter)
     Transform {
-      translation 0 0 0.0415
+      translation 0 0 0.035
       children [
         Shape {
           appearance PBRAppearance {
@@ -167,84 +168,62 @@ Robot {
             metalness 0
           }
           geometry DEF BODY Cylinder {
-            height 0.08
+            height 0.06
             radius 0.045
           }
         }
       ]
     }
-    DistanceSensor {
-      translation 0.042 0.02 0.063
-      rotation 0 0 1 0.5236003061004253
+
+    # Optional lidar mast
+    Transform {
+      translation 0 0 0.075
       children [
-        DEF SENSOR Transform {
-          rotation 0 1 0 1.5708
-          children [
-            Shape {
-              appearance PBRAppearance {
-                baseColor 1 1 0
-                roughness 1
-                metalness 0
-              }
-              geometry Cylinder {
-                height 0.004
-                radius 0.008
-              }
-            }
-          ]
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.2 0.2 0.2
+            roughness 1
+            metalness 0
+          }
+          geometry Cylinder {
+            radius 0.005
+            height 0.02
+          }
         }
       ]
-      name "ds0"
-      lookupTable [
-        0 1020 0
-        0.05 1020 0
-        0.15 0 0
-      ]
-      numberOfRays 2
-      aperture 1
     }
-    DistanceSensor {
-      translation 0.042 -0.02 0.063
-      rotation 0 0 1 -0.5235996938995747
-      children [
-        USE SENSOR
-      ]
-      name "ds1"
-      lookupTable [
-        0 1020 0
-        0.05 1020 0
-        0.15 0 0
-      ]
-      numberOfRays 2
-      aperture 1
-    }
+
     Camera {
-      translation 0.052 0 0.08
+      translation 0.052 0 0.07
       rotation 0 1 0 0
       width 320
       height 240
       name "camera"
     }
+
     Lidar {
-      translation 0 0 0.08
+      translation 0 0 0.09
       rotation 0 0 1 0
       name "lidar"
       numberOfLayers 1
       maxRange 3
       horizontalResolution 360
       fieldOfView 6.283185307
-      verticalFieldOfView 0
+      verticalFieldOfView 1
       type "fixed"
     }
   ]
+
   boundingObject Transform {
-    translation 0 0 0.0415
+    translation 0 0 0.035
     children [
       USE BODY
     ]
   }
+
   physics Physics {
   }
+
   controller "<extern>"
   name "my_robot"
 }

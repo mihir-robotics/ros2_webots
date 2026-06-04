@@ -8,9 +8,6 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include <webots/distance_sensor.h>
-
-#define TIME_STEP 32
 
 namespace my_robot_driver {
 class webot : public webots_ros2_driver::PluginInterface {
@@ -28,12 +25,14 @@ private:
   
   geometry_msgs::msg::Twist cmd_vel_msg;
   sensor_msgs::msg::LaserScan latest_scan_;
+
+  float front_distance_;
+  float left_distance_;
+  float right_distance_;
   
   WbDeviceTag lidar;
   WbDeviceTag right_motor;
   WbDeviceTag left_motor;
-  WbDeviceTag ds0;
-  WbDeviceTag ds1;
 };
 } // namespace my_robot_driver
 #endif
