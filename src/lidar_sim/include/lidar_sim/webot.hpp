@@ -6,6 +6,7 @@
 #include "webots_ros2_driver/WebotsNode.hpp"
 
 #include "geometry_msgs/msg/twist.hpp"
+#include "lidar_sim/msg/vel.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -17,13 +18,13 @@ public:
             std::unordered_map<std::string, std::string> &parameters) override;
 
 private:
-  void cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
+  void cmdVelCallback(const lidar_sim::msg::Vel::SharedPtr msg);
   void laserCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
 
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_subscription_;
+  rclcpp::Subscription<lidar_sim::msg::Vel>::SharedPtr cmd_vel_subscription_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_subscription_;
   
-  geometry_msgs::msg::Twist cmd_vel_msg;
+  lidar_sim::msg::Vel cmd_vel_msg;
   sensor_msgs::msg::LaserScan latest_scan_;
 
   float front_distance_;

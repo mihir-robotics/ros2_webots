@@ -61,7 +61,6 @@ source install/setup.bash
 # Launch the simulation
 ros2 launch lidar_sim robot_launch.py
 
-# Send velocity commands
-ros2 topic pub --once /cmd_vel geometry_msgs/Twist "{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
-```
+# Send velocity commands using custom Vel.msg
+ros2 topic pub --once /bot_velocity lidar_sim/msg/Vel "{linear: 0.2, angular: 0.0}"```
 ---
