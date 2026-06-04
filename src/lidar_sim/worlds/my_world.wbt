@@ -25,19 +25,6 @@ RectangleArena {
   }
 }
 
-# ── MAZE WALLS ───────────────────────────────────────────────────────────────
-#
-#  S-shaped corridor. Robot starts at (-1.4, -1.4) facing +X (right).
-#
-#  Corridor 1 — East  : y in [-1.5, -1.1], x from -1.5 to +1.1
-#  Corridor 2 — North : x in [+1.1, +1.5], y from -1.1 to +1.5
-#  Corridor 3 — West  : y in [+0.8, +1.5], x from -0.8 to +1.5
-#
-#  No branches, no loops. Each turn is a forced 90° corner.
-#  Corridor width: ~0.4 m  |  Wall thickness: 0.1 m  |  Wall height: 0.2 m
-#
-# ─────────────────────────────────────────────────────────────────────────────
-
 # W1 — North wall of Corridor 1 (horizontal)
 #   y = -1.1, runs from x = -1.5 to x = 1.1  (length 2.6)
 #   center: (-0.2, -1.1, 0.1)
@@ -88,11 +75,11 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.4 roughness 1 metalness 0 }
-      geometry Box { size 0.3 0.3 0.3 }
+      geometry Box { size 0.5 0.5 0.5 }
     }
   ]
   name "box_1"
-  boundingObject Shape { geometry Box { size 0.3 0.3 0.3 } }
+  boundingObject Shape { geometry Box { size 0.5 0.5 0.5 } }
 }
 
 Robot {
