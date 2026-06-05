@@ -3,7 +3,8 @@
 <package format="3">
   <name>lidar_sim</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description> A webots_ros2_driver plugin for autonomous differential-drive robot navigation.
+    Uses LIDAR-based obstacle avoidance and ArUco marker detection for stop conditions</description>
   <maintainer email="todo@todo.com">goober</maintainer>
   <license>Apache-2.0</license>
 

@@ -1,3 +1,4 @@
+[![CI](https://github.com/mihir-robotics/ros2_webots/actions/workflows/ci.yml/badge.svg)](https://github.com/mihir-robotics/ros2_webots/actions/workflows/ci.yml)
 # ROS2 Webots LIDAR Sim — Autonomous Robot Navigation Plugin
 
 A ROS 2 package that implements an autonomous differential-drive robot controller for the [Webots](https://cyberbotics.com/) simulation environment. The robot uses LIDAR data for obstacle avoidance and a camera with ArUco marker detection to determine when to stop.

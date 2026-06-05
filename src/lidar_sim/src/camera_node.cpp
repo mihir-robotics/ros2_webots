@@ -5,10 +5,14 @@
 namespace bot {
  
 cameraNode::cameraNode(rclcpp::Node *node) : detected_marker_id_(-1), marker_detected_(false), logger_(node->get_logger()) {
-  // Initialize ArUco detector with default dictionary (DICT_6X6_250)
+  
+  node->declare_parameter("min_marker_perimeter_rate", 0.80);
+  min_marker_perimeter_rate_ = node->get_parameter("min_marker_perimeter_rate").as_double();
+
+  // Initialize ArUco detector with default dictionary
   dictionary_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_ARUCO_ORIGINAL);
   detector_params_ = cv::aruco::DetectorParameters::create();
-  detector_params_->minMarkerPerimeterRate = 0.80; // ignore until close
+  detector_params_->minMarkerPerimeterRate = min_marker_perimeter_rate_; // ignore until aruco is close
  
   // Create subscription to camera image topic
   image_subscription_ = node->create_subscription<sensor_msgs::msg::Image>(

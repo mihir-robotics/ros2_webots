@@ -42,6 +42,11 @@ private:
   WbDeviceTag lidar;
   WbDeviceTag right_motor;
   WbDeviceTag left_motor;
+
+  // Parameters
+  double safe_distance_;
+  double min_distance_;
+  int stop_marker_id_;
 };
 } // namespace bot
 #endif
