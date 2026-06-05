@@ -11,7 +11,7 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-namespace my_robot_driver {
+namespace bot {
 class webot : public webots_ros2_driver::PluginInterface {
 public:
   void step() override;
@@ -26,7 +26,9 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_subscription_;
 
   // ArUco Camera Node
-  std::unique_ptr<cameraNode> aruco_camera_;
+  rclcpp::Node::SharedPtr          camera_ros_node_;
+  std::unique_ptr<cameraNode>      aruco_camera_;
+  std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> camera_executor_;
   
   lidar_sim::msg::Vel cmd_vel_msg;
   sensor_msgs::msg::LaserScan latest_scan_;
@@ -39,5 +41,5 @@ private:
   WbDeviceTag right_motor;
   WbDeviceTag left_motor;
 };
-} // namespace my_robot_driver
+} // namespace bot
 #endif

@@ -24,7 +24,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 
 # Export the plugin configuration file
-pluginlib_export_plugin_description_file(webots_ros2_driver my_robot_driver.xml)
+pluginlib_export_plugin_description_file(webots_ros2_driver bot.xml)
 
 # webot library
 add_library(

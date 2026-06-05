@@ -9,7 +9,7 @@ WorldInfo {
 Viewpoint {
   orientation -0.33185733874619844 -0.09874274160469809 0.9381474178937331 3.686018050088086
   position 1.700313773507203 1.0549607538959629 1.4846240848267684
-  follow "my_robot"
+  follow "bot"
 }
 TexturedBackground{
 }
@@ -29,7 +29,7 @@ RectangleArena {
 #   y = -1.1, runs from x = -1.5 to x = 1.1  (length 2.6)
 #   center: (-0.2, -1.1, 0.1)
 Solid {
-  translation -0.2 -1.1 0.1
+  translation -0.15 -1.25 0.1
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
@@ -44,7 +44,7 @@ Solid {
 #   x = 1.1, runs from y = -1.1 to y = 0.8  (length 1.9)
 #   center: (1.1, -0.15, 0.1)
 Solid {
-  translation 1.1 -0.15 0.1
+  translation 1.1 -0.25 0.1
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
@@ -59,19 +59,49 @@ Solid {
 #   y = 0.8, runs from x = -0.8 to x = 1.1  (length 1.9)
 #   center: (0.15, 0.8, 0.1)
 Solid {
-  translation 0.15 0.8 0.1
+  translation 0.0502 0.8055 0.1
+  rotation 0 0 1 -0.055
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
-      geometry Box { size 2.0 0.02 0.1 }
+      geometry Box { size 2.2 0.02 0.1 }
     }
   ]
   name "wall_3"
-  boundingObject Shape { geometry Box { size 2.0 0.02 0.1 } }
+  boundingObject Shape { geometry Box { size 2.2 0.02 0.1 } }
 }
 
+# Wall_4
 Solid {
-  translation 0 -0.15 0
+  translation -1.11 1.3 0.1
+  rotation 0 0 1 0.393
+  children [
+    Shape {
+      appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
+      geometry Box { size 0.8 0.02 0.1 }
+    }
+  ]
+  name "wall_4"
+  boundingObject Shape { geometry Box { size 0.8 0.02 0.1 } }
+}
+
+# Wall_5
+Solid {
+  translation -1.041 0.545 0.1
+  rotation 0 0 1 1.57
+  children [
+    Shape {
+      appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
+      geometry Box { size 0.6 0.02 0.1 }
+    }
+  ]
+  name "wall_5"
+  boundingObject Shape { geometry Box { size 0.6 0.02 0.1 } }
+}
+
+# Box
+Solid {
+  translation 0 -0.15 0.1
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.4 roughness 1 metalness 0 }
@@ -79,9 +109,10 @@ Solid {
     }
   ]
   name "box_1"
-  boundingObject Shape { geometry Box { size 0.5 0.5 0.5 } }
+  boundingObject Shape { geometry Box { size 0.5 0.5 0.1 } }
 }
 
+# Aruco_1
 Solid {
   translation 1.49 -1.39 0.10
   rotation 0 1 0 -1.5708
@@ -102,6 +133,7 @@ Solid {
   name "aruco_0"
 }
 
+# Aruco_2
 Solid {
   translation 1.39 1.48 0.10
   rotation 1 0 0 1.5708
@@ -122,6 +154,26 @@ Solid {
   name "aruco_1"
 }
 
+# Aruco_3
+Solid {
+  translation -1.03 0.52 0.10
+  rotation 0 1 0 1.5708
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "aruco_2.png" ] # Change later
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Plane {
+        size 0.15 0.15
+      }
+    }
+  ]
+  name "aruco_3"
+}
 
 Robot {
   translation -1.4 -1.4 0
@@ -134,6 +186,7 @@ Robot {
       device [
         RotationalMotor {
           name "left wheel motor"
+          maxVelocity 50
         }
       ]
       endPoint Solid {
@@ -171,6 +224,7 @@ Robot {
       device [
         RotationalMotor {
           name "right wheel motor"
+          maxVelocity 50
         }
       ]
       endPoint Solid {
@@ -254,5 +308,5 @@ Robot {
   }
 
   controller "<extern>"
-  name "my_robot"
+  name "bot"
 }

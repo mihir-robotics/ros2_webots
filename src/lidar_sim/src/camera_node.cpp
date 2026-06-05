@@ -2,7 +2,7 @@
  
 #include <iostream>
  
-namespace my_robot_driver {
+namespace bot {
  
 cameraNode::cameraNode(rclcpp::Node *node)
     : detected_marker_id_(-1), marker_detected_(false),
@@ -67,4 +67,4 @@ void cameraNode::imageCallback(
   }
 }
  
-} // namespace my_robot_driver
+} // namespace bot

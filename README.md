@@ -43,7 +43,7 @@ lidar_sim/
 ├── src/webot.cpp                   # Robot controller implementation
 ├── include/lidar_sim/webot.hpp     # Plugin interface header
 ├── launch/robot_launch.py          # ROS 2 launch configuration
-├── resource/my_robot.urdf          # Robot URDF definition
+├── resource/bot.urdf          # Robot URDF definition
 ├── worlds/my_world.wbt             # Webots simulation environment
 ├── CMakeLists.txt                  # Build configuration
 └── package.xml                     # ROS 2 package metadata
@@ -62,5 +62,5 @@ source install/setup.bash
 ros2 launch lidar_sim robot_launch.py
 
 # Send velocity commands using custom Vel.msg
-ros2 topic pub --once /bot_velocity lidar_sim/msg/Vel "{linear: 0.2, angular: 0.0}"```
+ros2 topic pub --once /bot/velocity lidar_sim/msg/Vel "{linear: 0.2, angular: 0.0}"```
 ---
