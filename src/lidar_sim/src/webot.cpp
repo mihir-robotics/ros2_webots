@@ -9,7 +9,7 @@
 #define HALF_DISTANCE_BETWEEN_WHEELS 0.045
 #define WHEEL_RADIUS 0.025
 
-namespace my_robot_driver {
+namespace bot {
 void webot::init(
     webots_ros2_driver::WebotsNode *node,
     std::unordered_map<std::string, std::string> &parameters) {
@@ -24,17 +24,20 @@ void webot::init(
   wb_motor_set_velocity(right_motor, 0.0);
 
   cmd_vel_subscription_ = node->create_subscription<lidar_sim::msg::Vel>(
-      "/bot_velocity", rclcpp::SensorDataQoS().reliable(),
+      "/bot/velocity", rclcpp::SensorDataQoS().reliable(),
       std::bind(&webot::cmdVelCallback, this, std::placeholders::_1));
 
     // Lidar subscription
   laser_subscription_ = node->create_subscription<sensor_msgs::msg::LaserScan>(
-      "/scan", rclcpp::SensorDataQoS().best_effort(),
+      "/bot/scan", rclcpp::SensorDataQoS().best_effort(),
       std::bind(&webot::laserCallback, this, std::placeholders::_1));
 
     // Initialize ArUco Camera Node
-    aruco_camera_ = std::make_unique<cameraNode>(node);
-    RCLCPP_INFO(node->get_logger(), "ArUco camera node initialized");
+    // Create a dedicated node for the camera:
+    camera_ros_node_ = rclcpp::Node::make_shared("camera_node");
+    aruco_camera_ = std::make_unique<cameraNode>(camera_ros_node_.get());
+    camera_executor_ = std::make_unique<rclcpp::executors::SingleThreadedExecutor>();
+    camera_executor_->add_node(camera_ros_node_);
 
 }
 
@@ -80,6 +83,9 @@ void webot::laserCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
 }
 
 void webot::step() {
+  // Call cameraNode executor
+  camera_executor_->spin_some(std::chrono::nanoseconds(0));
+
   auto forward_speed = cmd_vel_msg.linear;
   auto angular_speed = cmd_vel_msg.angular;
   
@@ -115,8 +121,8 @@ if (front_distance_ < safe_distance) {
 }
 
 
-} // namespace my_robot_driver
+} // namespace bot
 
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(my_robot_driver::webot,
+PLUGINLIB_EXPORT_CLASS(bot::webot,
                        webots_ros2_driver::PluginInterface)

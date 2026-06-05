@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 
-namespace my_robot_driver {
+namespace bot {
 class cameraNode {
     public: 
         cameraNode(rclcpp::Node *node);

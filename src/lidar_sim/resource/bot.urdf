@@ -3,7 +3,7 @@
     <webots>
         <device reference="lidar" type="Lidar">
         <ros>
-            <topicName>/scan</topicName>
+            <topicName>/bot/scan</topicName>
             <alwaysOn>true</alwaysOn>
             <frameId>lidar</frameId>
         </ros>
@@ -15,6 +15,6 @@
             <frameId>camera</frameId>
         </ros>
         </device>
-        <plugin type="my_robot_driver::webot" />
+        <plugin type="bot::webot" />
     </webots>
 </robot>

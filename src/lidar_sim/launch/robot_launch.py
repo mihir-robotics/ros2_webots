@@ -11,7 +11,7 @@ from webots_ros2_driver.utils import controller_url_prefix
 
 def generate_launch_description():
     package_dir = get_package_share_directory('lidar_sim')
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'my_robot.urdf')).read_text()
+    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'bot.urdf')).read_text()
 
     webots = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'my_world.wbt'),
@@ -19,11 +19,11 @@ def generate_launch_description():
         gui=True
     )
 
-    my_robot_driver = Node(
+    bot = Node(
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'my_robot'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'bot'},
         parameters=[
             {'robot_description': robot_description},
         ]
@@ -42,7 +42,7 @@ def generate_launch_description():
         SetEnvironmentVariable('WEBOTS_OPENGL_PROFILE', 'core'),
         SetEnvironmentVariable('CUDA_VISIBLE_DEVICES', '0'),
         webots,
-        my_robot_driver,
+        bot,
         static_transform_publisher,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
