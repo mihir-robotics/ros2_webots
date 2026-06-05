@@ -186,6 +186,7 @@ Robot {
       device [
         RotationalMotor {
           name "left wheel motor"
+          maxVelocity 50
         }
       ]
       endPoint Solid {
@@ -223,6 +224,7 @@ Robot {
       device [
         RotationalMotor {
           name "right wheel motor"
+          maxVelocity 50
         }
       ]
       endPoint Solid {
