@@ -32,6 +32,7 @@ class cameraNode {
     // ArUco detection parameters
     int detected_marker_id_;
     bool marker_detected_;
+    double min_marker_perimeter_rate_;
     
     // Logger
     rclcpp::Logger logger_;

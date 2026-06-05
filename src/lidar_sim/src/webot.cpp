@@ -14,6 +14,15 @@ void webot::init(
     webots_ros2_driver::WebotsNode *node,
     std::unordered_map<std::string, std::string> &parameters) {
 
+  // Declare and read parameters
+  node->declare_parameter("safe_distance", 0.3);
+  node->declare_parameter("min_distance", 0.1);
+  node->declare_parameter("stop_marker_id", 14);
+
+  safe_distance_ = node->get_parameter("safe_distance").as_double();
+  min_distance_  = node->get_parameter("min_distance").as_double();
+  stop_marker_id_ = node->get_parameter("stop_marker_id").as_int();
+
   right_motor = wb_robot_get_device("right wheel motor");
   left_motor = wb_robot_get_device("left wheel motor");
 
@@ -32,7 +41,11 @@ void webot::init(
       "/bot/scan", rclcpp::SensorDataQoS().best_effort(),
       std::bind(&webot::laserCallback, this, std::placeholders::_1));
 
-    // Initialize ArUco Camera Node
+    // Aruco Subscription
+  aruco_subscription_ = node->create_subscription<std_msgs::msg::Int32>(
+      "/aruco/marker_id", rclcpp::SensorDataQoS().best_effort(),
+      std::bind(&webot::arucoCallback, this, std::placeholders::_1));
+
     // Create a dedicated node for the camera:
     camera_ros_node_ = rclcpp::Node::make_shared("camera_node");
     aruco_camera_ = std::make_unique<cameraNode>(camera_ros_node_.get());
@@ -41,15 +54,17 @@ void webot::init(
 
 }
 
-void webot::cmdVelCallback(
-    const lidar_sim::msg::Vel::SharedPtr msg) {
+void webot::cmdVelCallback(const lidar_sim::msg::Vel::SharedPtr msg) {
   cmd_vel_msg.linear = msg->linear;
   cmd_vel_msg.angular = msg->angular;
 }
 
+void webot::arucoCallback(const std_msgs::msg::Int32::SharedPtr msg) {
+  aruco_msg.data = msg->data;
+}
+
 void webot::laserCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
-  // Store latest scan for obstacle detection
-  latest_scan_ = *msg;
+
   float front_min = std::numeric_limits<float>::infinity();
   float left_min  = std::numeric_limits<float>::infinity();
   float right_min = std::numeric_limits<float>::infinity();
@@ -84,7 +99,7 @@ void webot::laserCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
 
 void webot::step() {
   // Call cameraNode executor
-  camera_executor_->spin_some(std::chrono::nanoseconds(0));
+  camera_executor_->spin_some(std::chrono::milliseconds(5));
 
   auto forward_speed = cmd_vel_msg.linear;
   auto angular_speed = cmd_vel_msg.angular;
@@ -95,34 +110,37 @@ void webot::step() {
   auto command_motor_right =
   (forward_speed + angular_speed * HALF_DISTANCE_BETWEEN_WHEELS) /
   WHEEL_RADIUS;
-  
-double safe_distance = 0.25; // meters
-float turn_ratio = 0.015;
 
-if (front_distance_ < safe_distance) {
+double turn_ratio = (safe_distance_ - front_distance_) / (safe_distance_ - min_distance_);
+turn_ratio = std::clamp(turn_ratio, 0.0, 0.8);
 
+
+if (aruco_msg.data != stop_marker_id_) {
+if (front_distance_ < safe_distance_) {
     // Obstacle ahead
-
     if (left_distance_ > right_distance_) {
         // More space on left
-        wb_motor_set_velocity(left_motor, -command_motor_left*turn_ratio);
+        wb_motor_set_velocity(left_motor, command_motor_left  * (1.0 - turn_ratio));
         wb_motor_set_velocity(right_motor, command_motor_right);
     } else {
         // More space on right
         wb_motor_set_velocity(left_motor, command_motor_left);
-        wb_motor_set_velocity(right_motor, -command_motor_right*turn_ratio);
+        wb_motor_set_velocity(right_motor, command_motor_right * (1.0 - turn_ratio));
     }
-
 } else {
 
     wb_motor_set_velocity(left_motor, command_motor_left);
     wb_motor_set_velocity(right_motor, command_motor_right);
 }
 }
+// Stop robot when reached final Aruco marker
+else {
+    wb_motor_set_velocity(left_motor, 0.0);
+    wb_motor_set_velocity(right_motor, 0.0);
+}
+}
 
 
 } // namespace bot
-
 #include "pluginlib/class_list_macros.hpp"
-PLUGINLIB_EXPORT_CLASS(bot::webot,
-                       webots_ros2_driver::PluginInterface)
+PLUGINLIB_EXPORT_CLASS(bot::webot, webots_ros2_driver::PluginInterface)

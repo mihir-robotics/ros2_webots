@@ -1,16 +1,18 @@
 #include "lidar_sim/camera_node.hpp"
- 
 #include <iostream>
- 
+
+
 namespace bot {
  
-cameraNode::cameraNode(rclcpp::Node *node)
-    : detected_marker_id_(-1), marker_detected_(false),
-      logger_(node->get_logger()) {
-  // Initialize ArUco detector with default dictionary (DICT_6X6_250)
+cameraNode::cameraNode(rclcpp::Node *node) : detected_marker_id_(-1), marker_detected_(false), logger_(node->get_logger()) {
+  
+  node->declare_parameter("min_marker_perimeter_rate", 0.80);
+  min_marker_perimeter_rate_ = node->get_parameter("min_marker_perimeter_rate").as_double();
+
+  // Initialize ArUco detector with default dictionary
   dictionary_ = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_ARUCO_ORIGINAL);
   detector_params_ = cv::aruco::DetectorParameters::create();
-  detector_params_->minMarkerPerimeterRate = 0.80; // ignore until close
+  detector_params_->minMarkerPerimeterRate = min_marker_perimeter_rate_; // ignore until aruco is close
  
   // Create subscription to camera image topic
   image_subscription_ = node->create_subscription<sensor_msgs::msg::Image>(
@@ -21,16 +23,14 @@ cameraNode::cameraNode(rclcpp::Node *node)
   aruco_id_publisher_ = node->create_publisher<std_msgs::msg::Int32>(
       "/aruco/marker_id", rclcpp::SensorDataQoS().best_effort());
  
-  RCLCPP_INFO(logger_, "cameraNode initialized. Listening on "
-                       "camera/image_raw/image_color");
+  RCLCPP_INFO(logger_, "cameraNode initialized. Listening on " "camera/image_raw/image_color");
 }
  
 void cameraNode::imageCallback(
     const sensor_msgs::msg::Image::SharedPtr msg) {
   try {
     // Convert ROS image message to OpenCV Mat
-    cv_bridge::CvImagePtr cv_image = cv_bridge::toCvCopy(
-        msg, sensor_msgs::image_encodings::BGR8);
+    cv_bridge::CvImagePtr cv_image = cv_bridge::toCvCopy( msg, sensor_msgs::image_encodings::BGR8);
     cv::Mat frame = cv_image->image;
  
     // Detect ArUco markers
@@ -49,17 +49,10 @@ void cameraNode::imageCallback(
       msg_id.data = detected_marker_id_;
       aruco_id_publisher_->publish(msg_id);
  
-      RCLCPP_DEBUG(logger_, "ArUco marker detected with ID: %d",
-                   detected_marker_id_);
+      RCLCPP_DEBUG(logger_, "ArUco marker detected with ID: %d", detected_marker_id_);
  
-      // Optional: Draw markers on frame for visualization
-      cv::aruco::drawDetectedMarkers(frame, marker_corners, marker_ids);
     } else {
       marker_detected_ = false;
-      // Optionally publish -1 to indicate no marker detected
-      // auto msg_id = std_msgs::msg::Int32();
-      // msg_id.data = -1;
-      // aruco_id_publisher_->publish(msg_id);
     }
  
   } catch (cv_bridge::Exception &e) {

@@ -25,7 +25,11 @@ def generate_launch_description():
         output='screen',
         additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'bot'},
         parameters=[
-            {'robot_description': robot_description},
+        {'robot_description': robot_description},
+        {'safe_distance': 0.3},
+        {'min_distance': 0.1},
+        {'stop_marker_id': 14},
+        {'min_marker_perimeter_rate': 0.80}
         ]
     )
 
