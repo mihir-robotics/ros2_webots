@@ -21,9 +21,11 @@ public:
 private:
   void cmdVelCallback(const lidar_sim::msg::Vel::SharedPtr msg);
   void laserCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
+  void arucoCallback(const std_msgs::msg::Int32::SharedPtr msg);
 
   rclcpp::Subscription<lidar_sim::msg::Vel>::SharedPtr cmd_vel_subscription_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_subscription_;
+  rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr aruco_subscription_;
 
   // ArUco Camera Node
   rclcpp::Node::SharedPtr          camera_ros_node_;
@@ -31,7 +33,7 @@ private:
   std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> camera_executor_;
   
   lidar_sim::msg::Vel cmd_vel_msg;
-  sensor_msgs::msg::LaserScan latest_scan_;
+  std_msgs::msg::Int32 aruco_msg;
 
   float front_distance_;
   float left_distance_;
