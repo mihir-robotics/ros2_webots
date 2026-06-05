@@ -9,6 +9,9 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(cv_bridge REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(webots_ros2_driver REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
@@ -28,6 +31,7 @@ add_library(
   ${PROJECT_NAME}_lib
   SHARED
   src/webot.cpp
+  src/camera_node.cpp
 )
 target_include_directories(
   ${PROJECT_NAME}_lib
@@ -39,7 +43,12 @@ ament_target_dependencies(
   pluginlib
   rclcpp
   webots_ros2_driver
+  cv_bridge
+  sensor_msgs
+  std_msgs
 )
+
+target_include_directories(${PROJECT_NAME}_lib PRIVATE ${cv_bridge_INCLUDE_DIRS})
 
 # Ensure the message interfaces are generated before building the library
 add_dependencies(${PROJECT_NAME}_lib ${PROJECT_NAME})
@@ -47,6 +56,7 @@ add_dependencies(${PROJECT_NAME}_lib ${PROJECT_NAME})
 # Link the generated typesupport library
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 target_link_libraries(${PROJECT_NAME}_lib "${cpp_typesupport_target}")
+target_link_libraries(${PROJECT_NAME}_lib ${OpenCV_LIBS} cv_bridge::cv_bridge)
 
 install(TARGETS
   ${PROJECT_NAME}_lib
