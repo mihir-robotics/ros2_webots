@@ -5,8 +5,9 @@
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include "webots_ros2_driver/WebotsNode.hpp"
 
-#include "geometry_msgs/msg/twist.hpp"
+
 #include "lidar_sim/msg/vel.hpp"
+#include "lidar_sim/camera_node.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -23,6 +24,9 @@ private:
 
   rclcpp::Subscription<lidar_sim::msg::Vel>::SharedPtr cmd_vel_subscription_;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_subscription_;
+
+  // ArUco Camera Node
+  std::unique_ptr<cameraNode> aruco_camera_;
   
   lidar_sim::msg::Vel cmd_vel_msg;
   sensor_msgs::msg::LaserScan latest_scan_;

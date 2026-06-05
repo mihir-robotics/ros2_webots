@@ -33,11 +33,11 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
-      geometry Box { size 2.6 0.1 0.1 }
+      geometry Box { size 2.6 0.02 0.1 }
     }
   ]
   name "wall_1"
-  boundingObject Shape { geometry Box { size 2.6 0.1 0.1 } }
+  boundingObject Shape { geometry Box { size 2.6 0.02 0.1 } }
 }
 
 # W2 — West wall of Corridor 2 (vertical)
@@ -48,11 +48,11 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
-      geometry Box { size 0.1 2.0 0.1 }
+      geometry Box { size 0.02 2.0 0.1 }
     }
   ]
   name "wall_2"
-  boundingObject Shape { geometry Box { size 0.1 2.0 0.1 } }
+  boundingObject Shape { geometry Box { size 0.02 2.0 0.1 } }
 }
 
 # W3 — South wall of Corridor 3 (horizontal)
@@ -63,11 +63,11 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.8 roughness 1 metalness 0 }
-      geometry Box { size 2.0 0.1 0.1 }
+      geometry Box { size 2.0 0.02 0.1 }
     }
   ]
   name "wall_3"
-  boundingObject Shape { geometry Box { size 2.0 0.1 0.1 } }
+  boundingObject Shape { geometry Box { size 2.0 0.02 0.1 } }
 }
 
 Solid {
@@ -75,12 +75,53 @@ Solid {
   children [
     Shape {
       appearance PBRAppearance { baseColor 0.2 0.4 0.4 roughness 1 metalness 0 }
-      geometry Box { size 0.5 0.5 0.5 }
+      geometry Box { size 0.5 0.5 0.1 }
     }
   ]
   name "box_1"
   boundingObject Shape { geometry Box { size 0.5 0.5 0.5 } }
 }
+
+Solid {
+  translation 1.49 -1.39 0.10
+  rotation 0 1 0 -1.5708
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "aruco_0.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Plane {
+        size 0.15 0.15
+      }
+    }
+  ]
+  name "aruco_0"
+}
+
+Solid {
+  translation 1.39 1.48 0.10
+  rotation 1 0 0 1.5708
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "aruco_1.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Plane {
+        size 0.15 0.15
+      }
+    }
+  ]
+  name "aruco_1"
+}
+
 
 Robot {
   translation -1.4 -1.4 0
@@ -186,6 +227,7 @@ Robot {
       width 320
       height 240
       name "camera"
+      far 0.4
     }
 
     Lidar {

@@ -32,6 +32,10 @@ void webot::init(
       "/scan", rclcpp::SensorDataQoS().best_effort(),
       std::bind(&webot::laserCallback, this, std::placeholders::_1));
 
+    // Initialize ArUco Camera Node
+    aruco_camera_ = std::make_unique<cameraNode>(node);
+    RCLCPP_INFO(node->get_logger(), "ArUco camera node initialized");
+
 }
 
 void webot::cmdVelCallback(
